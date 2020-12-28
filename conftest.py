@@ -19,22 +19,27 @@ import pytest
 #     # env = request.param
 #     return a
 
-@pytest.fixture(params=["***参数1***", "***参数2***"])
-def myfixture(request):
-    print("\n执行myfixture，里面的参数是%s\n" % request.param)
-    yield request.param  # 类似return（返回），同时下面的语句也会执行，
-    # yield前相当于setup，yield后相当于teardown，也取决于作用域
-    print("清理数据，关闭数据库连接")  # teardown操作
+@pytest.fixture(scope="module")
+def myfixture():
+    print("执行myfixture")
+
+
+# @pytest.fixture(params=["***参数1***", "***参数2***"])
+# def myfixture(request):
+# print("\n执行myfixture，里面的参数是%s\n" % request.param)
+# yield request.param  # 类似return（返回），同时下面的语句也会执行，
+# # yield前相当于setup，yield后相当于teardown，也取决于作用域
+# print("清理数据，关闭数据库连接")  # teardown操作
 
 
 def pytest_collection_modifyitems(session, config, items):
     print(type(items))  # items是一个列表
-    items.reverse()  # 反转
+    # items.reverse()  # 反转
     for item in items:
         item.name = item.name.encode('utf-8').decode('unicode-escape')
         item._nodeid = item.nodeid.encode('utf-8').decode('unicode-escape')
-        print("item.name是%s" % item.name)
-        print("item.nodeid是%s" % item.nodeid)
+        # print("item.name是%s" % item.name)
+        # print("item.nodeid是%s" % item.nodeid)
 
         if "add" in item._nodeid:
             item.add_marker(pytest.mark.add)
